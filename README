@@ -1,0 +1,9 @@
+Project from UT Distributed Computing class Fall '15
+
+Uses the bayou protocol to manage a playlist mockup.
+
+The code structure is somewhat ad-hoc because I was figuring out the basics of network programming and multiprocessing with Python on my own at the time.
+
+The project is set up so that the main script can arbitrarily create or break connections between the servers and can order the clients to send or request songs.
+
+This code is old and may have issues. It was uploaded as-is.

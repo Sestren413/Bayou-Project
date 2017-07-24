@@ -1,0 +1,52 @@
+joinServer neo
+joinServer morpheus
+joinServer trinity
+joinClient zion morpheus
+breakConnection morpheus neo
+put zion song0 url0
+stabilize
+restoreConnection neo morpheus
+stabilize
+pause
+breakConnection neo trinity
+breakConnection morpheus trinity
+put zion song1 url1
+start
+stabilize
+printLog neo
+printLog morpheus
+printLog trinity
+breakConnection zion morpheus
+restoreConnection zion trinity
+stabilize
+put zion song2 url2
+stabilize
+printLog trinity
+printLog neo
+
+
+joinServer neo
+joinServer morpheus
+joinServer trinity
+joinClient zion morpheus
+stabilize
+put zion song0 url0
+put zion song1 url1
+delete zion song0
+delete zion song2
+stabilize
+printLog neo
+printLog morpheus
+printLog trinity
+get zion song1
+get zion song0
+
+
+joinServer neo
+joinServer morpheus
+joinServer trinity
+stabilize
+retireServer neo
+stabilize
+printLog morpheus
+printLog trinity

@@ -1,0 +1,18 @@
+Jordan Cook
+jrc4378
+jcook
+
+The project runs on python 3. Master.py reads in a text file of commands following the API provided in the project description.
+Unlike the last project, I was using this method to run the project myself, so it ought to work without incident.
+The program binds to whatever open ports the OS gives it, so there is no issue of a static set of ports getting full.
+
+A couple of notes on implementation, I don't know what, if any of this will turn out to be relevant, but it can't hurt to include it.
+The servers follow the advice given in Flexible Update Propagation for Weakly Consistent Replication and increment their internal logical clock to one greater than the greatest logical clock they have seen in order to maintain a causal ordering of logged elements. When a client gives a server a command, if the server is able to perform the command, it returns to the client the timestamp it was given in the log. The client then shows this stamp to the server the next time it issues a command. This way, in case of server switching, the server will check the provided timestamp against its log to know if it has recent enough logs to satisfy the request without violating any session guarantees. In practice this appears sufficient to satisfy the session guarantees although I do wonder if it might be stronger than strictly necessary.
+
+When creating a server, the master program calls restoreConnection once for every other server in existence. In this way, the initial connection doesn't follow special rules and it would be possible to handle a new server only joining to part of the network (not that the API supports such a thing).
+
+When retiring a server, that server goes through EXACTLY one anti-entropy session before refusing to communicate with anyone else and signalling the master program to terminate it. I did this so that if the server in question is the primary, it would not have more than one server believe that it needs to inherit the primary's role. It also prevents the server from retiring without informing anyone.
+
+The anti-entropy sessions are designed in two parts. In the first step, a server X sends out a vector request to a server Y. In the second step, when X receives Y's vector, X immediatelly sends Y all applicable log elements that it believes Y does not have (in the event of accidental duplicates from receiving anti-entropy information from two servers at the same time, the receiving server checks if a receivd log element is already present and if it is, it discards the duplicate). When anti-entropy is paused, servers are suspended at the first step, that is, they stop sending out any new vector requests. Any anti-entropy sessions in progress are allowed to finish. The requests are also used when tallying how many AE sessions are necessary to conclude that the system has stabilized. Each server runs for 2n AE sessions before reporting back to the master, where n is the number of servers, except for servers that are completely isolated. If a server has no connections with any other servers, it concludes that it is stable immediately.
+
+As far as a cleanup script goes, I really don't have much experience scripting in a *NIX environment, but I've taken a stab at it. Every time the project spawns a new process, that process appends its pid to the pidlog file, giving me a newline separated list of the pids of all of my processes. Running the kill command on those should clean up anything that gets away. I took a stab at a script for it in the cleanup file but I don't know if that's actually the right syntax or what. The pieces are there though. Sorry that's the best I can mange. Its better than killing anything with python in the name at least.

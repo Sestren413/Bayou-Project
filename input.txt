@@ -1,0 +1,15 @@
+joinServer neo
+joinServer morpheus
+joinServer trinity
+joinClient zion morpheus
+stabilize
+put zion song0 url0
+put zion song1 url1
+delete zion song0
+delete zion song2
+stabilize
+printLog neo
+printLog morpheus
+printLog trinity
+get zion song1
+get zion song0
